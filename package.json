@@ -1,0 +1,39 @@
+{
+  "name": "hierarchical-data-queries",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "setup": "node ./setup.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MiroDojkic/hierarchical-data-queries.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MiroDojkic/hierarchical-data-queries/issues"
+  },
+  "homepage": "https://github.com/MiroDojkic/hierarchical-data-queries#readme",
+  "dependencies": {
+    "commander": "^6.1.0",
+    "consola": "^2.15.0",
+    "dotenv": "^8.2.0",
+    "faker": "^5.1.0",
+    "knex": "^0.21.6",
+    "lodash": "^4.17.20",
+    "ora": "^5.1.0",
+    "pg": "^8.3.3"
+  },
+  "devDependencies": {
+    "eslint": "^7.10.0",
+    "eslint-config-semistandard": "^15.0.1",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1"
+  }
+}
