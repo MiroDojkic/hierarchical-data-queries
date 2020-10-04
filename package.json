@@ -2,9 +2,9 @@
   "name": "hierarchical-data-queries",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "setup": "node ./setup.js"
+    "setup": "node ./setup",
+    "start": "node ./run"
   },
   "repository": {
     "type": "git",
@@ -25,7 +25,9 @@
     "knex": "^0.21.6",
     "lodash": "^4.17.20",
     "ora": "^5.1.0",
-    "pg": "^8.3.3"
+    "pg": "^8.3.3",
+    "pg-hstore": "^2.3.3",
+    "sequelize": "^6.3.5"
   },
   "devDependencies": {
     "eslint": "^7.10.0",
