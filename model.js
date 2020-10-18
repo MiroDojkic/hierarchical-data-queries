@@ -34,12 +34,12 @@ Item.prototype.getTree = function getTree(levels) {
     AS (
       SELECT
         ${qItemFields},
-        ARRAY[]::integer[],
+        i.id::text::ltree,
         0
       FROM ${Item.tableName} i
       WHERE i.id = ${this.id}
       UNION ALL
-      SELECT ${qItemFields}, t.path || ${qNodeId}, t.lvl + 1
+      SELECT ${qItemFields}, t.path || ${qNodeId}::text, t.lvl + 1
       FROM ${Item.tableName} i
       JOIN tree t
       ON ${qNodeId} = t.id
