@@ -4,13 +4,15 @@ const sequelize = new Sequelize(process.env.DB_CONNECTION_STRING, {
   dialect: 'postgres',
   logging: false
 });
-const { STRING } = DataTypes;
+const { STRING, INTEGER } = DataTypes;
 
-const Item = sequelize.define('Item', {
+const Employee = sequelize.define('Employee', {
   name: STRING,
-  nodeId: {
+  role: STRING,
+  salary: INTEGER,
+  superiorId: {
     type: DataTypes.INTEGER,
-    field: 'node_id',
+    field: 'superior_id',
     references: {
       model: this,
       key: 'id',
@@ -18,40 +20,40 @@ const Item = sequelize.define('Item', {
     }
   }
 }, {
-  tableName: 'items',
+  tableName: 'employees',
   timestamps: false
 });
 
-Item.prototype.getTree = function getTree(levels) {
-  const attributes = Object.keys(Item.rawAttributes);
-  const qNodeId = getModelAttributeColumn(Item, 'nodeId', 'i');
-  const qItemFields = attributes
-    .map(attr => getModelAttributeColumn(Item, attr, 'i'))
+Employee.prototype.getTree = function getTree(levels) {
+  const attributes = Object.keys(Employee.rawAttributes);
+  const qNodeId = getModelAttributeColumn(Employee, 'superiorId', 'employee');
+  const qEmployeeFields = attributes
+    .map(attr => getModelAttributeColumn(Employee, attr, 'employee'))
     .join(', ');
-  const levelLimitFilter = levels ? `and t.lvl < ${levels}` : '';
+  const levelLimitFilter = levels ? `and tree.lvl < ${levels}` : '';
   const query = `
-    WITH RECURSIVE tree(id, name, node_id, path, lvl)
+    WITH RECURSIVE tree(id, name, role, salary, parent_id, lvl, path)
     AS (
       SELECT
-        ${qItemFields},
-        i.id::text::ltree,
-        0
-      FROM ${Item.tableName} i
-      WHERE i.id = ${this.id}
+        ${qEmployeeFields},
+        0,
+        employee.id::text::ltree
+      FROM ${Employee.tableName} employee
+      WHERE employee.id = ${this.id}
       UNION ALL
-      SELECT ${qItemFields}, t.path || ${qNodeId}::text, t.lvl + 1
-      FROM ${Item.tableName} i
-      JOIN tree t
-      ON ${qNodeId} = t.id
+      SELECT ${qEmployeeFields}, tree.lvl + 1, tree.path || ${qNodeId}::text
+      FROM ${Employee.tableName} employee
+      JOIN tree
+      ON ${qNodeId} = tree.id
       WHERE ${qNodeId} IS NOT NULL ${levelLimitFilter}
     )
     SELECT * FROM tree;
   `;
 
-  return sequelize.query(query, { mapToModel: true, model: Item });
+  return sequelize.query(query, { mapToModel: true, model: Employee });
 };
 
-module.exports = Item;
+module.exports = Employee;
 
 function getModelAttributeColumn(model, attribute, prefix) {
   const { field } = model.rawAttributes[attribute];

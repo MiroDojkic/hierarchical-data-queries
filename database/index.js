@@ -4,18 +4,20 @@ const db = require('knex')({
 });
 
 function init() {
-  return db.schema.createTable('items', table => {
+  return db.schema.createTable('employees', table => {
     table.increments();
     table.string('name');
-    table.integer('node_id');
+    table.string('role');
+    table.integer('salary');
+    table.integer('superior_id');
     table
-      .foreign('node_id')
-      .references('items.id');
+      .foreign('superior_id')
+      .references('employees.id');
   });
 }
 
 function reset() {
-  return db.schema.dropTableIfExists('items');
+  return db.schema.dropTableIfExists('employees');
 }
 
 module.exports = { db, reset, init };

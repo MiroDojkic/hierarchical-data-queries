@@ -1,22 +1,28 @@
+const faker = require('faker');
 const times = require('lodash/times');
 const flatten = require('lodash/flatten');
 const { db } = require('.');
 
 const BATCH_INSERT_SIZE = 500;
 async function seed(sizePerLevel, levels) {
-  const createLevelNodes = level => nodeId => times(sizePerLevel, () => ({
-    name: `Level ${level}, node ${nodeId}`,
-    node_id: nodeId
-  }));
-  async function seedDescendants(nodeIds, currentLevel) {
+  async function seedSubordinates(superiorIds, currentLevel) {
     if (currentLevel > levels) return;
-    const items = flatten(nodeIds.map(createLevelNodes(currentLevel)));
-    const childrenIds = await db
-      .batchInsert('items', items, BATCH_INSERT_SIZE)
+    const employees = flatten(superiorIds.map(createSubordinates));
+    const subordinateIds = await db
+      .batchInsert('employees', employees, BATCH_INSERT_SIZE)
       .returning('id');
-    return seedDescendants(childrenIds, currentLevel + 1);
+    return seedSubordinates(subordinateIds, currentLevel + 1);
   }
-  return seedDescendants([null], 1);
+  return seedSubordinates([null], 1);
+
+  function createSubordinates(superiorId) {
+    return times(sizePerLevel, () => ({
+      name: faker.fake('{{name.firstName}} {{name.lastName}}'),
+      role: faker.name.jobType(),
+      salary: faker.finance.amount(90000, 180000, 0),
+      superior_id: superiorId
+    }));
+  }
 }
 
 module.exports = seed;
