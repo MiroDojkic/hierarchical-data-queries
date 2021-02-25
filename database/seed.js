@@ -19,7 +19,7 @@ async function seed(sizePerLevel, levels) {
     return times(sizePerLevel, () => ({
       name: faker.fake('{{name.firstName}} {{name.lastName}}'),
       role: faker.name.jobType(),
-      salary: faker.finance.amount(90000, 180000, 0),
+      salary: faker.finance.amount(1000, 4500, 0),
       superior_id: superiorId
     }));
   }
