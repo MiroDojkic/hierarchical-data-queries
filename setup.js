@@ -25,15 +25,15 @@ async function setup(size, levels) {
   spinner.text = 'Creating schema';
   await init();
   spinner.text = 'Seeding';
-  return seed(size, levels)
-    .then(() => db('employees').count('id'))
-    .then(([{ count }]) => spinner.succeed(`Setup completed - ${count} employees added!`))
-    .then(() => {
-      spinner.stop();
-      process.exit();
-    })
-    .catch(err => {
-      consola.error(err);
-      process.exit(1);
-    });
+  try {
+    await seed(size, levels);
+    const [{ count }] = await db('employees').count('id');
+    spinner.succeed(`Seeding completed - ${count} employees added!`);
+    spinner.stop();
+    process.exit();
+  } catch (err) {
+    spinner.stop();
+    consola.error(err);
+    process.exit(1);
+  }
 }
